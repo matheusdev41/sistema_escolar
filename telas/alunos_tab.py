@@ -52,8 +52,22 @@ def criar_aba_alunos(parent):
         if messagebox.askyesno("Confirmar", "Inativar aluno selecionado?"):
             inativar_aluno(aluno_id)
             carregar()
+    
+    def on_select(event):
+        selecionado  = tabela.selection()
+        if selecionado:
+            btn_editar.config(state="normal")
+            btn_inativar.config(state="normal")
+        else:
+            btn_editar.config(state="disable")
+            btn_inativar.config(state="disable")
+        
+    tabela.bind("<<TreeviewSelect>>", on_select)
 
 
     ttk.Button(botoes, text="Novo", command=novo).pack(side="left", padx=5)
-    ttk.Button(botoes, text="Editar", command=editar).pack(side="left", padx=5)
-    ttk.Button(botoes, text="Inativar", command=inativar).pack(side="left", padx=5)
+
+    btn_editar = ttk.Button(botoes, text="Editar", command=editar, state="disable")
+    btn_editar.pack(side="left", padx=5)
+    btn_inativar = ttk.Button(botoes, text="Inativar", command=inativar)
+    btn_inativar.pack(side="left", padx=5)

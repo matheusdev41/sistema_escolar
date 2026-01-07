@@ -3,11 +3,22 @@ from tkinter import ttk, messagebox
 from services.aluno_service import cadastrar_aluno, atualizar_aluno
 
 def abrir_formulario(parent, aluno=None, atualizar_callback=None):
+    TURMAS = [
+        "Robótica",
+        "Informática",
+        "Manutenção",
+        "Administração",
+        "Inglês"
+    ]
+
     janela = tk.Toplevel(parent)
-    janela.title("Aluno")
-    janela.geometry("380x420")
-    janela.resizable(False, False)
-    janela.grab_set()
+    if aluno:
+        janela.title("Editar aluno")
+    else:
+        janela.title("Novo Aluno")
+        janela.geometry("380x420")
+        janela.resizable(False, False)
+        janela.grab_set()
 
     # ===== FRAME CAMPOS =====
     frame_campos = ttk.Frame(janela)
@@ -21,16 +32,27 @@ def abrir_formulario(parent, aluno=None, atualizar_callback=None):
         entry.pack(fill="x", pady=5)
         return entry
 
+    def criar_combo(label, valores):
+        ttk.Label(frame_campos, text=label).pack(anchor="w")
+        combo = ttk.Combobox(
+            frame_campos,
+            values=valores,
+            state="readonly"
+        )
+        combo.pack(fill="x", pady=5)
+        return combo
+
     campos["nome"] = criar_campo("Nome")
+    campos["nome"].focus()
     campos["matricula"] = criar_campo("Matrícula")
-    campos["turma"] = criar_campo("Turma")
+    campos["turma"] = criar_combo("Turma", TURMAS)
     campos["turno"] = criar_campo("Turno")
 
     if aluno and len(aluno) >= 5:
         id_, nome, matricula, turma, turno = aluno
         campos["nome"].insert(0, nome)
         campos["matricula"].insert(0, matricula)
-        campos["turma"].insert(0, turma)
+        campos["turma"].set(turma)
         campos["turno"].insert(0, turno)
 
     # ===== FRAME BOTÕES (RODAPÉ FIXO) =====
@@ -43,6 +65,10 @@ def abrir_formulario(parent, aluno=None, atualizar_callback=None):
         if not dados["nome"]:
             messagebox.showwarning("Erro", "Nome é obrigatório")
             return
+        
+        if not dados["turma"]:
+            messagebox.showwarning("Erro", "Selecione uma turma")
+        
 
         if aluno:
             # garante que aluno_id seja um valor simples
@@ -63,7 +89,7 @@ def abrir_formulario(parent, aluno=None, atualizar_callback=None):
             atualizar_callback()
 
         janela.destroy()
-
+    ttk.Button(frame_botoes, text="Cancelar", command=janela.destroy). pack(side="right", padx=5)
     ttk.Button(frame_botoes, text="Salvar", command=salvar).pack(
         side="right"
     )
