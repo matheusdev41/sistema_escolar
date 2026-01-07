@@ -57,8 +57,8 @@ def atualizar_aluno(aluno_id, nome, matricula, turma, turno):
 
     cursor.execute("""
         UPDATE alunos
-        SET nome=%s, matricula=%d, turma=%d, turno=%s
-        WHERE id=%d
+        SET nome=%s, matricula=%s, turma=%s, turno=%s
+        WHERE id=%s
     """, (nome, matricula, turma, turno, aluno_id))
 
     conn.commit()
@@ -72,7 +72,7 @@ def inativar_aluno(aluno_id):
         UPDATE alunos
         SET status = 'Inativo'
         WHERE id = %s
-    """, (aluno_id))
+    """, (aluno_id,))
 
     conn.commit()
     conn.close()
